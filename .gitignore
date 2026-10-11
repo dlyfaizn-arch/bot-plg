@@ -10,4 +10,4 @@ level.json
 # Folder & file sistem
 node_modules/
 *.log
-.DS_Store
+.DS_Store   
