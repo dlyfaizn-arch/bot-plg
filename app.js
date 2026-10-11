@@ -282,7 +282,7 @@ function bacaSaldo() {
             fs.readFileSync(fileSaldo, 'utf8')
         );
     } catch (error) {
-        console.error('Gagal membaca saldo.json:', error);
+        console.log('💾 saldo.json belum ada — akan dibuat otomatis saat pertama kali menyimpan.');
         return {};
     }
 }
@@ -305,6 +305,7 @@ function bacaLevel() {
             fs.readFileSync(fileLevel, 'utf8')
         );
     } catch (error) {
+        console.log('💾 level.json belum ada — akan dibuat otomatis saat pertama kali menyimpan.');
         return {};
     }
 }
@@ -1457,11 +1458,31 @@ if (interaction.isButton()) {
         simpanSaldo(saldoPemain);
         permainanMines.delete(idPesan);
 
+        // buka SEMUA kotak: ranjau → merah + kepala, kotak aman → hijau + koin
         const komponenNonaktif = interaction.message.components.map(row =>
             new ActionRowBuilder().addComponents(
-                row.components.map(button =>
-                    ButtonBuilder.from(button).setDisabled(true)
-                )
+                row.components.map(button => {
+                    const tombol = ButtonBuilder.from(button);
+
+                    // tombol Cash Out → cukup dinonaktifkan saja
+                    if (tombol.data.custom_id === 'mines_cashout') {
+                        return tombol.setDisabled(true);
+                    }
+
+                    const posisi = Number(
+                        tombol.data.custom_id.replace('mines_', '')
+                    );
+
+                    if (game.ranjau.has(posisi)) {
+                        // ranjau → MERAH + kepala apalu
+                        tombol.setEmoji(EMOJI_BOM).setStyle(ButtonStyle.Danger);
+                    } else {
+                        // semua kotak aman (sudah dibuka ATAU belum) → HIJAU + koin
+                        tombol.setEmoji(EMOJI_KOIN).setStyle(ButtonStyle.Success);
+                    }
+
+                    return tombol.setDisabled(true);
+                })
             )
         );
 
@@ -1565,9 +1586,9 @@ if (interaction.isButton()) {
                                              if (game.ranjau.has(posisi)) {
                             // ranjau → MERAH
                             tombol.setEmoji(EMOJI_BOM).setStyle(ButtonStyle.Danger);
-                        } else if (game.dibuka.has(posisi)) {
-                            // kotak aman yang sudah dibuka → HIJAU
-                            tombol.setStyle(ButtonStyle.Success);
+                        } else {
+                            // semua kotak aman (sudah dibuka ATAU belum) → HIJAU + koin
+                            tombol.setEmoji(EMOJI_KOIN).setStyle(ButtonStyle.Success);
                         }
 
                         return tombol.setDisabled(true);   
