@@ -1,0 +1,13 @@
+# ===== JANGAN PERNAH UPLOAD FILE INI! =====
+# .env berisi TOKEN bot kamu = seperti PASSWORD!
+# Kalau ikut terupload ke GitHub → bot kamu bisa dibajak orang!
+.env
+
+# Data pribadi pemain (dibuat ulang otomatis oleh bot)
+saldo.json
+level.json
+
+# Folder & file sistem
+node_modules/
+*.log
+.DS_Store
