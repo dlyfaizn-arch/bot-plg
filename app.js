@@ -274,7 +274,13 @@ const daftarPengali = {
 
 const permainanMines = new Map();
 
-const fileSaldo = path.join(__dirname, 'saldo.json');
+// folder data (untuk Volume Railway — agar saldo & level tidak reset saat redeploy)
+const folderData = path.join(__dirname, 'data');
+if (!fs.existsSync(folderData)) {
+    fs.mkdirSync(folderData, { recursive: true });
+}
+
+const fileSaldo = path.join(folderData, 'saldo.json');
 
 function bacaSaldo() {
     try {
@@ -297,7 +303,7 @@ function simpanSaldo(saldo) {
 const saldoPemain = bacaSaldo();
 
 // ===== SISTEM LEVEL (XP dari chat, ala UwU) =====
-const fileLevel = path.join(__dirname, 'level.json');
+const fileLevel = path.join(folderData, 'level.json');
 
 function bacaLevel() {
     try {
